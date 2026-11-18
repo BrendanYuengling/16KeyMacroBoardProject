@@ -46,7 +46,7 @@ The replacement three-pin switches have two electrical pins and a central plasti
 
 ## 3. Matrix Schematic
 
-![Early KiCad schematic showing the 16 switch and diode paths connected to the Pico GPIO labels](Schematic.png)
+![Early KiCad schematic showing the 16 switch and diode paths connected to the Pico GPIO labels](pictures/Schematic.png)
 
 *Figure 1. Schematic development view. This image predates the final cleanup of unused pins and wire endpoints and should not be treated as the final manufacturing schematic.*
 
@@ -107,7 +107,7 @@ The diode footprint places axial leads 7.62 mm apart. Pad 1 is the cathode and p
 
 ## 5. Component Placement and Board Outline
 
-![KiCad component placement showing the Pico at left, the switch matrix at right, and four mounting holes](PCB%20Layout.png)
+![KiCad component placement showing the Pico at left, the switch matrix at right, and four mounting holes](pictures/PCB%20Layout.png)
 
 *Figure 2. Placement stage before routing. Thin connection lines are the ratsnest, not manufactured copper traces. The Pico was subsequently rotated 180 degrees in the board plane, and the mounting-hole references were changed from REF** to H1-H4.*
 
@@ -133,7 +133,7 @@ The editable KiCad files and exported rule-check reports are not currently in th
 
 ## 7. 3D Review
 
-![KiCad 3D rendering of the macro pad PCB with controller, diodes, switch footprints, and mounting holes](PCB%203d%20View.png)
+![KiCad 3D rendering of the macro pad PCB with controller, diodes, switch footprints, and mounting holes](pictures/PCB%203d%20View.png)
 
 *Figure 3. KiCad rendering used to review overall placement, orientation, and silkscreen.*
 
@@ -143,7 +143,7 @@ Missing switch models do not imply missing PCB footprints. However, the renderin
 
 ## 8. Manufacturing Outputs
 
-![Gerber Viewer displaying copper, silkscreen, board outline, and both drill files](DrillAndWiresLayout.png)
+![Gerber Viewer displaying copper, silkscreen, board outline, and both drill files](pictures/DrillAndWiresLayout.png)
 
 *Figure 4. Exported manufacturing layers viewed together with plated and non-plated drill data.*
 

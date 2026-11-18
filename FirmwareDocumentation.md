@@ -70,7 +70,7 @@ SW1 and SW2 belong to ROW0. SW3 and SW4 belong to ROW1. SW1/SW3 share COL0, and 
 
 Each button has a series diode with its band toward the row. Each path connects a column to a row rather than directly to a GND pin.
 
-![Pico H and breadboard matrix wiring](matrix-2x2_1.jpg)
+![Pico H and breadboard matrix wiring](pictures/matrix-2x2_1.jpg)
 
 ### How the scan works
 

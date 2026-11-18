@@ -1,92 +1,32 @@
 # 16-Key USB Macro Pad
 
-I'm building a 16-key macro pad with a Raspberry Pi Pico H and a custom PCB. I'm using this project to learn PCB design in KiCad and firmware development in C with the Pico SDK.
+I designed a custom 4×4 keypad in KiCad, soldered the board by hand, and wrote the matrix scanner in C for a Raspberry Pi Pico H. The assembled board works as a USB keyboard. I tested all 16 switches in Notepad, where SW1 through SW16 type `a` through `p`.
 
-The PCB is ordered. While I wait for it, I'm testing on a breadboard. So far I've worked through blink, a button-controlled LED, a toggle test, and a basic 2x2 matrix scanner.
+![Front of the assembled 16-key PCB](SolderedPCBBoardFront.jpg)
 
-## Current progress
+## How I built and tested it
 
-- Designed the 4x4 matrix and PCB in KiCad and ordered the boards.
-- Tested compiling and flashing firmware onto the Pico H.
-- Built a 2x2 breadboard matrix and got switch readings through USB serial.
-- Still to do: debouncing, USB keyboard reports, and testing the assembled board.
+1. Started with LED and button tests to learn GPIO and active-low inputs.
+2. Built a 2×2 breadboard matrix and used USB serial to check switch states.
+3. Soldered the Pico sockets and four switch-and-diode pairs onto the PCB. I ran the same 2×2 firmware to check the soldered connections before populating the rest.
+4. Expanded the scanner to 4×4 and verified individual and simultaneous presses over serial.
+5. Connected my scanner to the Pico SDK's TinyUSB HID example and verified each letter over USB.
 
-The current scanner prints button states. It does not act as a USB keyboard yet.
+The matrix uses four row GPIOs and four column GPIOs for 16 switches. The scanner drives one row low at a time and reads the four columns. Each switch has a 1N4148 diode to prevent unwanted current paths when several keys are held.
 
-## Files
+## Project files
 
-| File | Purpose |
-| --- | --- |
-| [blink.c](blink.c) | Raspberry Pi blink example, with the delay changed to 500 ms |
-| [buttonLEDtest.c](buttonLEDtest.c) | Onboard LED follows a button on GP6 |
-| [togglebuttonLEDtest](togglebuttonLEDtest) | LED toggles on a new button press |
-| [2x2buttonmatrix](2x2buttonmatrix) | Scans four buttons and prints their states |
-| [processDocumentation.md](processDocumentation.md) | Setup, tests, mistakes, and next steps |
+- [PCB design notes](PCBDesignDocumentation.md) cover parts, schematic, layout, and fabrication.
+- [Firmware and test log](FirmwareDocumentation.md) covers the experiments from blink through USB HID.
+- [4×4 serial scanner](4x4buttonmatrix.c) reports raw key states for hardware troubleshooting.
+- [USB keyboard firmware](4x4matrixLetterMapped.c) maps the 16 switches to letter keys.
 
-The toggle and matrix files currently have no extension, but contain C code. These are separate experiments with separate main functions; do not build them all into one executable.
+## Build notes
 
-## Hardware and wiring
+I used VS Code with the Raspberry Pi Pico extension and Pico SDK 2.3.1, targeting `pico` for the Pico H. The HID source uses the USB descriptors and build settings from the [Pico SDK HID example](https://github.com/raspberrypi/pico-examples/tree/master/usb/device/dev_hid_composite). This repository contains the C source snapshots. To build the keyboard, start with that example project and use `4x4matrixLetterMapped.c` as its `main.c`, keeping the example's USB configuration and descriptor files. Compile and copy the generated UF2 to the Pico's `RPI-RP2` drive in BOOTSEL mode.
 
-The breadboard test uses a Pico H, USB data cable, breadboard, jumper wires, four momentary pushbuttons, and four 1N4148 diodes. I used a multimeter to identify the button contacts.
+## Next steps
 
-The final board uses 16 electrical MX-style switches, 16 diodes, and two 1x20 female headers for the Pico H. My original optical switches were not suitable for this circuit.
+Record simultaneous USB key presses and releases, check quick taps, and add per-key debouncing. The current key map is the keyboard demo. Shortcut macros are the next firmware milestone.
 
-![Pico H and breadboard matrix wiring](matrix-2x2_1.jpg)
-
-Some connections are hidden by wires in the photo, so use the table as well. Disconnect USB before changing the wiring.
-
-| Signal | Pico GPIO | Physical header pin |
-| --- | --- | --- |
-| ROW0 | GP2 | 4 |
-| ROW1 | GP3 | 5 |
-| COL0 | GP6 | 9 |
-| COL1 | GP7 | 10 |
-
-| Button | Row | Column |
-| --- | --- | --- |
-| SW1 | ROW0 | COL0 |
-| SW2 | ROW0 | COL1 |
-| SW3 | ROW1 | COL0 |
-| SW4 | ROW1 | COL1 |
-
-Each path is column -> button -> diode -> row. The diode's banded end (cathode, K) connects toward the row. Use button contacts that connect only when pressed.
-
-The columns use internal pull-ups. The scanner drives one row low, reads both columns, and releases that row before selecting the other. A low reading means the button on the selected row is pressed.
-
-## Building a test
-
-My setup uses VS Code, the official Raspberry Pi Pico extension, and Pico SDK 2.3.1. The board target is Pico for the Pico H.
-
-This folder contains source snapshots, not a complete standalone SDK project. CMakeLists.txt and pico_sdk_import.cmake are not included 
-
-1. Create a blink example project using the Pico extension.
-2. Replace its blink.c contents with the experiment you want to run.
-3. For the matrix test, add these settings after target_link_libraries(blink pico_stdlib) in the generated CMakeLists.txt:
-
-```cmake
-pico_enable_stdio_usb(blink 1)
-pico_enable_stdio_uart(blink 0)
-```
-
-4. Compile the project. The output is still blink.uf2 because the build target is named blink.
-5. Hold BOOTSEL while connecting the Pico, then copy the UF2 onto RPI-RP2. The drive disappears when the Pico restarts into the program.
-
-## Viewing the readings
-
-Open a serial monitor, such as Microsoft's Serial Monitor extension in VS Code, and select the Pico's COM port. Windows Device Manager lists it under Ports (COM & LPT). Connect without holding BOOTSEL to run the scanner.
-
-If the monitor asks for a baud rate, use 115200. The connection uses USB serial rather than a physical UART.
-
-```text
-SW1=0 SW2=0 SW3=0 SW4=0
-```
-
-A 1 means pressed and a 0 means released. There is a 100 ms pause between scans, so short taps can be missed. Hold the buttons while testing. Debouncing is not implemented yet.
-
-## References and learning notes
-
-- [Pico SDK GPIO reference](https://www.raspberrypi.com/documentation/pico-sdk/hardware.html#hardware_gpio)
-- [Pico SDK timing reference](https://www.raspberrypi.com/documentation/pico-sdk/high_level.html#pico_time)
-- [Pico SDK standard I/O](https://www.raspberrypi.com/documentation/pico-sdk/runtime.html)
-
-The blink program comes from Raspberry Pi's examples; its copyright and license notice are kept in the file. I started the button test from a supplied tutoring example, then worked through the toggle and matrix tests with guidance and code review. When troubleshooting I try to find problem myself, then if no able to come to a solution (even if not the most elegant) will ask codex for guidance. I do not ask for answers but hints/prompts to get me in the right direction
+I wrote the scanner and key mapping while learning from Raspberry Pi's examples. I used Codex for tutoring and troubleshooting guidance.

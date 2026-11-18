@@ -104,6 +104,12 @@ I plugged the Pico H into the headers and ran the existing 2×2 matrix test with
 
 **Result:** The 2×2 test passed on the custom PCB. This verified the soldered switch and diode paths and the Pico header connections used by those four keys.
 
+## Test 6: Full 4×4 Matrix on the PCB
+
+After the 2×2 PCB test passed, I soldered the remaining 12 switches and their diodes. I expanded my scanner to use four rows (GP2–GP5) and four columns (GP6–GP9). It drives one row low at a time, reads the four columns, and prints all 16 switch states over USB serial.
+
+**Result:** The scanner worked on the fully assembled PCB. I also held multiple keys at once and saw their states reported together in the serial monitor.
+
 ### Tests recorded and Passed
 
 - No buttons pressed: all zeros.

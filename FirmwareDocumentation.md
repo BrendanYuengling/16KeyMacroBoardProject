@@ -94,6 +94,16 @@ At first, every switch printed 1 regardless of what I pressed. Since the code in
 
 I found a mistake in the button wiring and corrected it. After that, the scanner responded to the buttons. I have not recorded the exact misplaced contacts, so use the connection table as well as the photo when following the circuit.
 
+## Test 5: 2×2 Matrix on the PCB
+
+**Goal:** Verify the first four keys on the custom PCB using the same firmware that worked on the breadboard.
+
+I soldered two 1×20 female headers for the Pico H, then populated the top-left 2×2 section with switches SW1, SW2, SW5, and SW6 and their matching diodes D1, D2, D5, and D6. I matched each diode’s band to the `K` marking on the PCB.
+
+I plugged the Pico H into the headers and ran the existing 2×2 matrix test without changing the code. I used the Serial Monitor to check that the four soldered keys responded. The test prints `SW1` through `SW4`, which correspond to PCB positions `SW1`, `SW2`, `SW5`, and `SW6`.
+
+**Result:** The 2×2 test passed on the custom PCB. This verified the soldered switch and diode paths and the Pico header connections used by those four keys.
+
 ### Tests recorded and Passed
 
 - No buttons pressed: all zeros.

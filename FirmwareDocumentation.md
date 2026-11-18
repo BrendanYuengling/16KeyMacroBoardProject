@@ -110,6 +110,12 @@ After the 2×2 PCB test passed, I soldered the remaining 12 switches and their d
 
 **Result:** The scanner worked on the fully assembled PCB. I also held multiple keys at once and saw their states reported together in the serial monitor.
 
+## Test 7: USB Keyboard on the 16-Key PCB
+
+I used the Pico SDK’s TinyUSB HID example as the starting point for USB communication and connected it to my 4×4 scanner. I mapped SW1 through SW16 to the A through P key codes. Each scan builds a keyboard report from the switches currently held, and releasing all switches sends an empty report.
+
+**Result:** I tested all 16 keys individually on the assembled PCB. Each key typed its assigned letter in Notepad.
+
 ### Tests recorded and Passed
 
 - No buttons pressed: all zeros.
@@ -122,14 +128,7 @@ After the 2×2 PCB test passed, I soldered the remaining 12 switches and their d
 
 I made sure to hold the buttons long enough for the current 100 ms scan interval to catch them.
 
-## Next Steps
-
-- Add debouncing and test one accepted event per physical press.
-- Scan more frequently while keeping serial output readable.
-- Test a single USB keyboard key, including its release.
-- Expand to the 4x4 matrix and test the assembled PCB.
-- Add the KiCad files and reproducible build configuration to the repository.
-
 ## Source Notes
 
 The blink program is a Raspberry Pi example. The initial button-to-LED code was supplied during tutoring; I used it to learn GPIO setup and active-low inputs. I worked through the toggle and matrix code with explanations and review. These notes track what I understand, what I changed, and what still needs testing.
+The example dev_HID_composite is a RaspberryPiExample. I used it as a starting point for a USB keyboard connection, i then connected my 4x4 matrix scanner to it and set the sw#Pressed variables to keys and checked over the array using a for loop.
